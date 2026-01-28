@@ -1,0 +1,5 @@
+name : mguhc
+version : 1.0
+main : fr.flobanai.mguhc.Main
+api-version : 1.21.11
+author : flobanai
