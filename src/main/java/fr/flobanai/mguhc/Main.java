@@ -22,8 +22,8 @@ public class Main extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
 
         // Commandes
-        getCommand("mg_setrole").setExecutor(new SetroleCommand());
-        getCommand("mg_getrole").setExecutor(new GetroleCommand());
+        getCommand("mgSetRole").setExecutor(new SetroleCommand());
+        getCommand("mgGetRole").setExecutor(new GetroleCommand());
     }
 
     @EventHandler
@@ -49,6 +49,7 @@ public class Main extends JavaPlugin implements Listener {
         }
     }
 
+    @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         
         // GESTION DE LA FORCE (Si l'attaquant est un joueur)

@@ -1,14 +1,14 @@
 name : mguhc
-version : 1.1
+version : 1.2
 main : fr.flobanai.mguhc.Main
 api-version : 1.21.11
 author : flobanai
 
 commands:
-  mg_setrole:
+  mgSetRole:
     description: Commande pour attribuer un role à un joueur
-    usage: /mg_setrole
+    usage: /mgSetRole
 
-  mg_getrole:
+  mgGetRole:
     description: Commande pour afficher le rôle d'un joueur
-    usage: /mg_getrole
+    usage: /mgGetRole
