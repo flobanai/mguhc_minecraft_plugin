@@ -1,5 +1,8 @@
 package fr.flobanai.mguhc;
 
+import java.util.HashMap;
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -7,8 +10,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import java.util.HashMap;
-import java.util.UUID;
 
 public class Main extends JavaPlugin implements Listener {
     
@@ -18,6 +19,10 @@ public class Main extends JavaPlugin implements Listener {
     public void onEnable() {
         System.out.println("MG UHC Plugin Enabled");
         getServer().getPluginManager().registerEvents(this, this);
+
+        // Commandes
+        getCommand("mg_setrole").setExecutor(new SetroleCommand());
+        getCommand("mg_getrole").setExecutor(new GetroleCommand());
     }
 
     @EventHandler

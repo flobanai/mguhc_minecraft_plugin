@@ -3,3 +3,12 @@ version : 1.0
 main : fr.flobanai.mguhc.Main
 api-version : 1.21.11
 author : flobanai
+
+commands:
+  mg_setrole:
+    description: Commande pour attribuer un role à un joueur
+    usage: /mg_setrole
+
+  mg_getrole:
+    description: Commande pour afficher le rôle d'un joueur
+    usage: /mg_getrole
