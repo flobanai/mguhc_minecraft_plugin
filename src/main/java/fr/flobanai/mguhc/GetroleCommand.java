@@ -1,5 +1,9 @@
 package fr.flobanai.mguhc;
 
+import java.lang.reflect.Field;
+import java.util.Map;
+import java.util.UUID;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -22,7 +26,12 @@ public class GetroleCommand implements CommandExecutor {
             try{
                 Player targetPlayer = player.getServer().getPlayer(args[0]);
                 if (targetPlayer != null) {
-                    sender.sendMessage("Le rôle de " + targetPlayer.getName() + " est : " + Main.playerRoles.get(targetPlayer.getUniqueId()).name());
+                    Object role = getRoleFromMain(targetPlayer.getUniqueId());
+                    if (role != null) {
+                        sender.sendMessage("Le rôle de " + targetPlayer.getName() + " est : " + role.toString());
+                    } else {
+                        sender.sendMessage("Rôle introuvable pour " + targetPlayer.getName() + ".");
+                    }
                 } else {
                     sender.sendMessage("Joueur introuvable.");
                 }
@@ -30,9 +39,30 @@ public class GetroleCommand implements CommandExecutor {
                 sender.sendMessage("Erreur lors de la récupération du rôle du joueur.");
             }
         }
-        else
-            sender.sendMessage("Votre rôle actuel est : " + Main.playerRoles.get(player.getUniqueId()).name());
+        else {
+            Object role = getRoleFromMain(player.getUniqueId());
+            if (role != null) {
+                sender.sendMessage("Votre rôle actuel est : " + role.toString());
+            } else {
+                sender.sendMessage("Votre rôle actuel est introuvable.");
+            }
+        }
 
         return true;
+    }
+
+    private Object getRoleFromMain(UUID uuid) {
+        try {
+            Class<?> mainClass = Class.forName("fr.flobanai.mguhc.Main");
+            Field field = mainClass.getDeclaredField("playerRoles");
+            field.setAccessible(true);
+            Object mapObj = field.get(null); // expect static field
+            if (mapObj instanceof Map) {
+                Map<?, ?> map = (Map<?, ?>) mapObj;
+                return map.get(uuid);
+            }
+        } catch (Exception ignored) {
+        }
+        return null;
     }
 }

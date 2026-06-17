@@ -13,12 +13,13 @@ public enum Roles {
     APOLLON,
     HADES,
     HEPHAISTOS,
+    THESEE,
 
     // Tartare
     CRONOS,
     DEMON_MALE,
     DEMON_FEMALE,
-    MINOTAUR,
+    MINOTAURE,
 
     // Solos
     NYX,
