@@ -27,7 +27,7 @@ public class GetroleCommand implements CommandExecutor {
             DataPlayer dataPlayer = Main.uhcPlayers.get(targetPlayer.getUniqueId());
             
             if (dataPlayer != null && dataPlayer.getRole() != null) {
-                sender.sendMessage("Le rôle est : " + dataPlayer.getRole().name());
+                sender.sendMessage("Le rôle est : " + dataPlayer.getRole().getName());
             } else {
                 sender.sendMessage("Ce joueur n'a pas encore de rôle.");
             }
