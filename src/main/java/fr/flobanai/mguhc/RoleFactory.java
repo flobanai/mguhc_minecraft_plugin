@@ -8,6 +8,7 @@ import fr.flobanai.mguhc.roles.Cronos;
 import fr.flobanai.mguhc.roles.DemonF;
 import fr.flobanai.mguhc.roles.DemonM;
 import fr.flobanai.mguhc.roles.Hades;
+import fr.flobanai.mguhc.roles.Hephaistos;
 import fr.flobanai.mguhc.roles.Hera;
 import fr.flobanai.mguhc.roles.Hermes;
 import fr.flobanai.mguhc.roles.Minotaure;
@@ -46,13 +47,15 @@ public class RoleFactory {
                 return new Aphrodite();
             case "THESEE":
                 return new Thesee();
+            case "HEPHAISTOS":
+                return new Hephaistos();
             case "CRONOS":
                 return new Cronos();
             case "MINOTAURE":
                 return new Minotaure();
-            case "DEMON_FEMELLE":
+            case "DEMONF":
                 return new DemonF();
-            case "DEMON_MALE":
+            case "DEMONM":
                 return new DemonM();
             case "NYX":
                 return new Nyx();

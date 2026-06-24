@@ -1,12 +1,14 @@
 package fr.flobanai.mguhc;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 
-public class MgCommand implements CommandExecutor {
+public class MgCommand implements TabExecutor {
 
     private final SetroleCommand setroleCmd = new SetroleCommand();
     private final GetroleCommand getroleCmd = new GetroleCommand();
@@ -34,5 +36,40 @@ public class MgCommand implements CommandExecutor {
                 sender.sendMessage("§cSous-commande inconnue. Utilisez setrole ou getrole.");
                 return true;
         }
+    }
+
+    /**
+     * Méthode gérant l'autocomplétion (la touche TAB en jeu)
+     */
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        List<String> completions = new ArrayList<>();
+
+        if (args.length == 1) {
+            List<String> subCommands = Arrays.asList("setrole", "getrole");
+            
+            for (String sub : subCommands) {
+                if (sub.toLowerCase().startsWith(args[0].toLowerCase())) {
+                    completions.add(sub);
+                }
+            }
+            return completions;
+        }
+        
+        else if (args.length == 2) {
+            return null;
+        }
+        
+        else if (args.length == 3 && args[0].equalsIgnoreCase("setrole")) {
+            List<String> roles = Arrays.asList("Zeus", "Ares", "Hades", "Hermes", "Artemis", "Thesee", "Poseidon", "Hera", "Apollon", "Aphrodite", "Hephaistos", "Cronos", "Minotaure", "DemonM", "DemonF");
+            
+            for (String role : roles) {
+                if (role.toLowerCase().startsWith(args[2].toLowerCase())) {
+                    completions.add(role);
+                }
+            }
+            return completions;
+        }
+        return completions;
     }
 }
