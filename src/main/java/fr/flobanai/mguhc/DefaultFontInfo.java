@@ -8,8 +8,8 @@ public enum DefaultFontInfo {
     U('U', 5), u('u', 5), V('V', 5), v('v', 5), W('W', 5), w('w', 5), X('X', 5), x('x', 5), Y('Y', 5), y('y', 5),
     Z('Z', 5), z('z', 5), SPACE(' ', 3), DEFAULT('a', 4);
 
-    private char character;
-    private int length;
+    private final char character;
+    private final int length;
 
     DefaultFontInfo(char character, int length) {
         this.character = character;

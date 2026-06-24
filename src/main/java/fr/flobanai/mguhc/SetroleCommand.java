@@ -13,7 +13,6 @@ public class SetroleCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         
         if (!(sender instanceof Player)) {
-            sender.sendMessage("Seul un joueur peut utiliser cette commande !");
             return false;
         }
 

@@ -11,12 +11,11 @@ public class GetroleCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         
         if (!(sender instanceof Player)) {
-            sender.sendMessage("Seul un joueur peut utiliser cette commande !");
             return false;
         }
 
         Player player = (Player) sender;
-        Player targetPlayer = player; // Par défaut, on cible le joueur qui tape la commande
+        Player targetPlayer = player; 
 
         if(args.length > 0 ){
             targetPlayer = player.getServer().getPlayer(args[0]);
