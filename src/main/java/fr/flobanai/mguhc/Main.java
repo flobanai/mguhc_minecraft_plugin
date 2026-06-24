@@ -15,6 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Main extends JavaPlugin implements Listener {
     
     public static HashMap<UUID, DataPlayer> uhcPlayers = new HashMap<>();
+    public static boolean isDay; 
     private org.bukkit.scheduler.BukkitRunnable timeTask;
 
     @Override
@@ -31,8 +32,8 @@ public class Main extends JavaPlugin implements Listener {
             public void run() {
                 org.bukkit.World world = getServer().getWorlds().get(0);
                 long time = world.getTime();
-                
-                boolean isDay = time < 12000 || time > 23000;
+
+                isDay = time < 12000 || time > 23000;
 
                 if (isDay && !wasDay) {
                     wasDay = true;
