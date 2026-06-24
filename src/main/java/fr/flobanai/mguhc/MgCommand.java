@@ -18,6 +18,7 @@ public class MgCommand implements TabExecutor {
     private final StartGameCmd startCmd = new StartGameCmd();
     private final NightCmd nightCmd = new NightCmd();
     private final DayCmd dayCmd = new DayCmd();
+    private final DarknessCmd darknessCmd = new DarknessCmd();
     
     private final Map<String, String> commandPermissions = new HashMap<>();
 
@@ -27,6 +28,7 @@ public class MgCommand implements TabExecutor {
         commandPermissions.put("start", "mguhc.admin");
         commandPermissions.put("night", "mguhc.admin");
         commandPermissions.put("day", "mguhc.admin");
+        commandPermissions.put("darkness", "none");
         commandPermissions.put("help", "none");
     }
 
@@ -66,6 +68,9 @@ public class MgCommand implements TabExecutor {
                 
             case "day":
                 return dayCmd.onCommand(sender, command, label, subArgs);
+                
+            case "darkness":
+                return darknessCmd.onCommand(sender, command, label, subArgs);
                 
             default:
                 sender.sendMessage("§cSous-commande inconnue. Faites /mg help pour plus d'informations.");
