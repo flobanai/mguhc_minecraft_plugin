@@ -23,8 +23,7 @@ public class Main extends JavaPlugin implements Listener {
         System.out.println("MG UHC Plugin Enabled");
         getServer().getPluginManager().registerEvents(this, this);
 
-        getCommand("mg_setrole").setExecutor(new SetroleCommand());
-        getCommand("mg_getrole").setExecutor(new GetroleCommand());
+        getCommand("mg").setExecutor(new MgCommand());
     }
 
     @EventHandler

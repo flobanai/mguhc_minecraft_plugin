@@ -5,9 +5,13 @@ api-version : 1.21.11
 author : flobanai
 
 commands:
-  mg_setrole:
-    description: Attribue un rôle à un joueur
-    usage: /mg_setrole <joueur> <role>
-  mg_getrole:
-    description: Affiche le rôle d'un joueur
-    usage: /mg_getrole [joueur]
+  mg:
+    description: Englobe l'entiéreté des commandes du plugin
+    usage: /mg <subcommand> [parameters]
+  
+  #setrole:
+    #description: Attribue un rôle à un joueur
+    #usage: /mg setrole <joueur> <role>
+  #getrole:
+    #description: Affiche le rôle d'un joueur
+    #usage: /mg getrole [joueur]
