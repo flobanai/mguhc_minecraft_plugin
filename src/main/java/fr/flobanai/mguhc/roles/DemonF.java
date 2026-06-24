@@ -5,7 +5,7 @@ import fr.flobanai.mguhc.DataPlayer;
 public class DemonF extends Role {
 
     public DemonF() {
-        super("Demon_femelle");
+        super("Demon Femelle");
         this.setTeam("Tartare");
     }
 
