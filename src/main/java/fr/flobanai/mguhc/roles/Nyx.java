@@ -1,5 +1,7 @@
 package fr.flobanai.mguhc.roles;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Effect;
@@ -21,6 +23,7 @@ public class Nyx extends Role implements Listener {
 
     private UUID playerUuid;
     private int darknessUses = 1;
+    private final List<String> hiddenDeathMessages = new ArrayList<>();
 
     public Nyx() {
         super("Nyx");
@@ -29,6 +32,14 @@ public class Nyx extends Role implements Listener {
 
     public Nyx(String name) {
         super(name);
+    }
+
+    public void addHiddenDeathMessage(String message) {
+        this.hiddenDeathMessages.add(message);
+    }
+
+    public List<String> getHiddenDeathMessages() {
+        return this.hiddenDeathMessages;
     }
 
     @Override
@@ -52,7 +63,7 @@ public class Nyx extends Role implements Listener {
                 }
                 
                 if (hasNoArmor && !Main.isDay){
-                    p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0));
+                    p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false, false));
                 }
                 else {
                     p.removePotionEffect(PotionEffectType.INVISIBILITY);
@@ -85,32 +96,44 @@ public class Nyx extends Role implements Listener {
         this.darknessUses--;
         player.sendMessage("§5Les joueurs autour de vous sont aveuglés.");
 
-        // Parcourt toutes les entités dans un rayon de 15 blocs (15, 15, 15)
         for (Entity entity : player.getNearbyEntities(15.0, 15.0, 15.0)) {
             if (entity instanceof Player) {
                 Player target = (Player) entity;
-                
-                // Cécité I (amplifier = 0) pendant 20 secondes (400 ticks)
                 target.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 400, 0, false, false));
                 target.sendMessage("§8La nuit vous aveugle...");
             }
         }
 
-        Location center = player.getLocation().add(0, 1, 0);
+        new BukkitRunnable() {
+            int ticksLapsed = 0;
 
-        for (int i = 0; i < 75; i++) {
-            double offsetX = (Math.random() - 0.5) * 15.0; // Étendue sur X
-            double offsetY = (Math.random() - 0.5) * 5.0;  // Étendue sur Y
-            double offsetZ = (Math.random() - 0.5) * 15.0; // Étendue sur Z
-            
-            Location particleLoc = new Location(
-                player.getWorld(), 
-                center.getX() + offsetX, 
-                center.getY() + offsetY, 
-                center.getZ() + offsetZ
-            );
-            player.getWorld().playEffect(particleLoc, Effect.SMOKE, 4);
-        }
+            @Override
+            public void run() {
+                if (ticksLapsed >= 400 || !player.isOnline()) {
+                    this.cancel();
+                    return;
+                }
+
+                Location center = player.getLocation().add(0, 1, 0);
+                
+                for (int i = 0; i < 75; i++) {
+                    double offsetX = (Math.random() - 0.5) * 15.0;
+                    double offsetY = (Math.random() - 0.5) * 5.0;
+                    double offsetZ = (Math.random() - 0.5) * 15.0;
+                    
+                    Location particleLoc = new Location(
+                        player.getWorld(), 
+                        center.getX() + offsetX, 
+                        center.getY() + offsetY, 
+                        center.getZ() + offsetZ
+                    );
+                    
+                    player.getWorld().playEffect(particleLoc, Effect.SMOKE, 4);
+                }
+
+                ticksLapsed += 10;
+            }
+        }.runTaskTimer(JavaPlugin.getPlugin(Main.class), 0L, 10L);
     }
 
     @Override

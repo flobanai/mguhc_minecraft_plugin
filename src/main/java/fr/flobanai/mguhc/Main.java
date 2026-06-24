@@ -10,6 +10,8 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import fr.flobanai.mguhc.roles.Nyx;
+
 public class Main extends JavaPlugin implements Listener {
 
     private static Main instance;
@@ -78,29 +80,55 @@ public class Main extends JavaPlugin implements Listener {
         if (victimData != null && victimData.getRole() != null) {
             event.setDeathMessage(null);
 
-            String team = victimData.getRole().getTeam();
-            String color = "§f";
+            if (!victimData.getRole().getName().equalsIgnoreCase("Hades")) {
+                String team = victimData.getRole().getTeam();
+                String color = "§f";
 
-            if (team.equalsIgnoreCase("Tartare")) {
-                color = "§c";
-            } else if (team.equalsIgnoreCase("Olympe")) {
-                color = "§e";
-            } else if (team.equalsIgnoreCase("Nyx")) {
-                color = "§5";
+                if (team.equalsIgnoreCase("Tartare")) {
+                    color = "§c";
+                } else if (team.equalsIgnoreCase("Olympe")) {
+                    color = "§e";
+                } else if (team.equalsIgnoreCase("Nyx")) {
+                    color = "§5";
+                }
+
+                String line1 = "--------------------------------------";
+                String line2 = victim.getName() + " est mort, il était " + color + victimData.getRole().getName();
+                
+                Player killer = victim.getKiller();
+                boolean isHidden = false;
+
+                if (killer != null) {
+                    DataPlayer killerData = uhcPlayers.get(killer.getUniqueId());
+                    if (killerData != null && killerData.getRole() instanceof Nyx && !isDay) {
+                        isHidden = true;
+                        Nyx nyxRole = (Nyx) killerData.getRole();
+                        String hiddenLine2 = "§8" + victim.getName() + " a été englouti par les Ténèbres, il était " + color + victimData.getRole().getName();
+                        nyxRole.addHiddenDeathMessage(hiddenLine2);
+                    }
+                }
+
+                if (!isHidden) {
+                    getServer().broadcastMessage(centerMessage(line1));
+                    getServer().broadcastMessage(centerMessage(line2));
+                    getServer().broadcastMessage(centerMessage(line1));
+                }
+
+                if (victimData.getRole() instanceof Nyx) {
+                    Nyx nyxRole = (Nyx) victimData.getRole();
+                    if (!nyxRole.getHiddenDeathMessages().isEmpty()) {
+                        getServer().broadcastMessage(centerMessage(line1));
+                        getServer().broadcastMessage(centerMessage("§5Les âmes capturées par Nyx sont libérées..."));
+                        for (String msg : nyxRole.getHiddenDeathMessages()) {
+                            getServer().broadcastMessage(centerMessage(msg));
+                        }
+                        getServer().broadcastMessage(centerMessage(line1));
+                    }
+                }
             }
 
-            String line1 = "--------------------------------------";
-            String line2 = victim.getName() + " est mort, il était " + color + victimData.getRole().getName();
             
-            getServer().broadcastMessage(centerMessage(line1));
-            getServer().broadcastMessage(centerMessage(line2));
-            getServer().broadcastMessage(centerMessage(line1));
         }
-
-        if (victimData != null){
-            victimData.deleteRole();
-        }
-        
     }
 
     private String centerMessage(String message) {
