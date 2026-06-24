@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import fr.flobanai.mguhc.roles.Nyx;
 
@@ -19,11 +20,13 @@ public class Main extends JavaPlugin implements Listener {
     
     public static boolean isDay = true;
     private int currentEpisode = 1;
+    private BukkitTask gameTask;
 
     @Override
     public void onEnable() {
         instance = this;
         getServer().getPluginManager().registerEvents(this, this);
+        getCommand("mg").setExecutor(new MgCommand());
     }
 
     public static Main getInstance() {
@@ -44,32 +47,51 @@ public class Main extends JavaPlugin implements Listener {
             }
         }
 
-        new BukkitRunnable() {
+        startGameLoop();
+    }
+
+    private void startGameLoop() {
+        if (gameTask != null) {
+            gameTask.cancel();
+        }
+        
+        gameTask = new BukkitRunnable() {
             @Override
             public void run() {
-                isDay = !isDay;
-
-                if (isDay) {
-                    currentEpisode++;
-                    getServer().getWorlds().get(0).setTime(0);
-                    getServer().broadcastMessage("§8[§6MgUHC§8] §fDébut de l'épisode §e" + currentEpisode + " §f! §eLe soleil se lève.");
-                } else {
-                    getServer().getWorlds().get(0).setTime(13000);
-                    getServer().broadcastMessage("§8[§6MgUHC§8] §9La nuit tombe.");
-                }
-
-                for (DataPlayer dp : uhcPlayers.values()) {
-                    if (dp.getRole() != null) {
-                        if (isDay) {
-                            dp.getRole().resetEpisodeUses();
-                            dp.getRole().applyDayEffects(dp);
-                        } else {
-                            dp.getRole().applyNightEffects(dp);
-                        }
-                    }
-                }
+                advanceTime();
             }
         }.runTaskTimer(this, 12000L, 12000L);
+    }
+
+    private void advanceTime() {
+        isDay = !isDay;
+
+        if (isDay) {
+            currentEpisode++;
+            getServer().getWorlds().get(0).setTime(0);
+            getServer().broadcastMessage("§8[§6MgUHC§8] §fDébut de l'épisode §e" + currentEpisode + " §f! §eLe soleil se lève.");
+        } else {
+            getServer().getWorlds().get(0).setTime(13000);
+            getServer().broadcastMessage("§8[§6MgUHC§8] §9La nuit tombe.");
+        }
+
+        for (DataPlayer dp : uhcPlayers.values()) {
+            if (dp.getRole() != null) {
+                if (isDay) {
+                    dp.getRole().resetEpisodeUses();
+                    dp.getRole().applyDayEffects(dp);
+                } else {
+                    dp.getRole().applyNightEffects(dp);
+                }
+            }
+        }
+    }
+
+    public void forceNight() {
+        if (isDay) {
+            advanceTime();
+            startGameLoop();
+        }
     }
 
     @EventHandler
@@ -80,15 +102,15 @@ public class Main extends JavaPlugin implements Listener {
         if (victimData != null && victimData.getRole() != null) {
             event.setDeathMessage(null);
 
-            if (!victimData.getRole().getName().equalsIgnoreCase("Hades")) {
+            if (!"Hades".equalsIgnoreCase(victimData.getRole().getName())) {
                 String team = victimData.getRole().getTeam();
                 String color = "§f";
 
-                if (team.equalsIgnoreCase("Tartare")) {
+                if ("Tartare".equalsIgnoreCase(team)) {
                     color = "§c";
-                } else if (team.equalsIgnoreCase("Olympe")) {
+                } else if ("Olympe".equalsIgnoreCase(team)) {
                     color = "§e";
-                } else if (team.equalsIgnoreCase("Nyx")) {
+                } else if ("Nyx".equalsIgnoreCase(team)) {
                     color = "§5";
                 }
 
@@ -126,8 +148,6 @@ public class Main extends JavaPlugin implements Listener {
                     }
                 }
             }
-
-            
         }
     }
 

@@ -16,6 +16,7 @@ public class MgCommand implements TabExecutor {
     private final GetroleCommand getroleCmd = new GetroleCommand();
     private final HelpCmd helpCmd = new HelpCmd();
     private final StartGameCmd startCmd = new StartGameCmd();
+    private final NightCmd nightCmd = new NightCmd();
     
     private final Map<String, String> commandPermissions = new HashMap<>();
 
@@ -23,6 +24,7 @@ public class MgCommand implements TabExecutor {
         commandPermissions.put("setrole", "mguhc.admin");
         commandPermissions.put("getrole", "mguhc.admin");
         commandPermissions.put("start", "mguhc.admin");
+        commandPermissions.put("night", "mguhc.admin");
         commandPermissions.put("help", "none");
     }
 
@@ -54,6 +56,12 @@ public class MgCommand implements TabExecutor {
             case "help":
                 return helpCmd.onCommand(sender, command, label, subArgs);
                 
+            case "start":
+                return startCmd.onCommand(sender, command, label, subArgs);
+
+            case "night":
+                return nightCmd.onCommand(sender, command, label, subArgs);
+                
             default:
                 sender.sendMessage("§cSous-commande inconnue. Faites /mg help pour plus d'informations.");
                 return true;
@@ -81,7 +89,7 @@ public class MgCommand implements TabExecutor {
             return completions;
         }
         
-        if (args.length == 2) {
+        if (args.length == 2 && subCommand.equals("setrole")) {
             return null;
         }
         
