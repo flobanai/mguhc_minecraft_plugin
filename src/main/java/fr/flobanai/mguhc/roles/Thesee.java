@@ -6,6 +6,7 @@ public class Thesee extends Role {
 
     public Thesee() {
         super("Thésée");
+        this.setTeam("Olympe");
     }
 
     @Override

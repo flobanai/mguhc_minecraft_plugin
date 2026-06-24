@@ -6,6 +6,7 @@ public class Hades extends Role {
 
     public Hades() {
         super("Hadès");
+        this.setTeam("Olympe");
     }
 
     @Override

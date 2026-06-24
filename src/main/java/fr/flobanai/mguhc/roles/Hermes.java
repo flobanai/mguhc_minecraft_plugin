@@ -6,6 +6,7 @@ public class Hermes extends Role {
 
     public Hermes() {
         super("Hermès");
+        this.setTeam("Olympe");
     }
 
     @Override

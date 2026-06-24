@@ -6,6 +6,7 @@ public class Nyx extends Role {
 
     public Nyx() {
         super("Nyx");
+        this.setTeam("Nyx");
     }
 
     @Override

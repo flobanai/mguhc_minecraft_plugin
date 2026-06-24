@@ -6,6 +6,7 @@ public class Cronos extends Role {
 
     public Cronos() {
         super("Cronos");
+        this.setTeam("Tartare");
     }
 
     @Override

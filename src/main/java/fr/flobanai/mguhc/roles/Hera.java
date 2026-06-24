@@ -6,6 +6,7 @@ public class Hera extends Role {
 
     public Hera() {
         super("Héra");
+        this.setTeam("Olympe");
     }
 
     @Override

@@ -8,6 +8,7 @@ import fr.flobanai.mguhc.DataPlayer;
  */
 public abstract class Role {
     private final String name;
+    private String team;
 
     public Role(String name) {
         this.name = name;
@@ -15,6 +16,22 @@ public abstract class Role {
 
     public String getName() {
         return name;
+    }
+
+    public String getTeam() {
+        return team;
+    }
+
+    public void setTeam(String newTeam) {
+        if (newTeam.equalsIgnoreCase("Olympe") || 
+            newTeam.equalsIgnoreCase("Tartare") || 
+            newTeam.equalsIgnoreCase(this.name)) {
+            
+            this.team = newTeam;
+            
+        } else {
+            System.out.println("[Attention] Tentative d'assigner une équipe invalide (" + newTeam + ") au rôle " + this.name);
+        }
     }
 
     /**

@@ -6,6 +6,7 @@ public class Aphrodite extends Role {
 
     public Aphrodite() {
         super("Aphrodite");
+        this.setTeam("Olympe");
     }
 
     @Override

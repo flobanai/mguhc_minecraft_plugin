@@ -6,6 +6,7 @@ public class Poseidon extends Role {
 
     public Poseidon() {
         super("Poséidon");
+        this.setTeam("Olympe");
     }
 
     @Override

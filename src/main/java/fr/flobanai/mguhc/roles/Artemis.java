@@ -6,6 +6,7 @@ public class Artemis extends Role {
 
     public Artemis() {
         super("Artémis");
+        this.setTeam("Olympe");
     }
 
     @Override

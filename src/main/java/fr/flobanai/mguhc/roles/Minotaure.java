@@ -6,6 +6,7 @@ public class Minotaure extends Role {
 
     public Minotaure() {
         super("Minotaure");
+        this.setTeam("Tartare");
     }
 
     @Override

@@ -6,6 +6,7 @@ public class DemonM extends Role {
 
     public DemonM() {
         super("Demon_male");
+        this.setTeam("Tartare");
     }
 
     @Override

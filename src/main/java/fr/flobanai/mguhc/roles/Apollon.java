@@ -6,6 +6,7 @@ public class Apollon extends Role {
 
     public Apollon() {
         super("Apollon");
+        this.setTeam("Olympe");
     }
 
     @Override
