@@ -26,35 +26,35 @@ public class RoleFactory {
 
     public static Role getRoleFromString(String roleName) {
         switch (roleName.toUpperCase()) {
-            case "Zeus":
+            case "ZEUS":
                 return new Zeus();
-            case "Poseidon":
+            case "POSEIDON":
                 return new Poseidon();
-            case "Hades":
+            case "HADES":
                 return new Hades();
-            case "Hermes":
+            case "HERMES":
                 return new Hermes();
-            case "Hera":
+            case "HERA":
                 return new Hera();
-            case "Apollon":
+            case "APOLLON":
                 return new Apollon();
-            case "Artemis":
+            case "ARTEMIS":
                 return new Artemis();
-            case "Ares":
+            case "ARES":
                 return new Ares();
-            case "Aphrodite":
+            case "APHRODITE":
                 return new Aphrodite();
-            case "Thesee":
+            case "THESEE":
                 return new Thesee();
-            case "Cronos":
+            case "CRONOS":
                 return new Cronos();
-            case "Minotaure":
+            case "MINOTAURE":
                 return new Minotaure();
-            case "Demon_femelle":
+            case "DEMON_FEMELLE":
                 return new DemonF();
-            case "Demon_male":
+            case "DEMON_MALE":
                 return new DemonM();
-            case "Nyx":
+            case "NYX":
                 return new Nyx();
             default:
                 return null; // Rôle introuvable
