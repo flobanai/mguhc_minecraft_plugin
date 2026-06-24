@@ -11,6 +11,7 @@ import fr.flobanai.mguhc.roles.Role;
 public class DataPlayer {
     private final UUID uuid;
     private Role role;
+    private int waterTimer = 0;
     
     private double damageModifier = 1.0;
     private double resistanceModifier = 1.0;
@@ -100,6 +101,22 @@ public class DataPlayer {
             p.addPotionEffect(new PotionEffect(type, Integer.MAX_VALUE, level - 1, false, false), true);
         } else {
             p.removePotionEffect(type);
+        }
+    }
+
+    public void tickWaterTimer(Player player) {
+        if (player.getLocation().getBlock().isLiquid()) {
+            waterTimer++;
+            
+            if (waterTimer >= 30) {
+                double maxHealth = player.getMaxHealth();
+                if (player.getHealth() < maxHealth) {
+                    player.setHealth(Math.min(maxHealth, player.getHealth() + 2.0));
+                }
+                waterTimer = 0;
+            }
+        } else {
+            waterTimer = 0;
         }
     }
 

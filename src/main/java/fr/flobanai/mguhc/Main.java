@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -55,6 +56,18 @@ public class Main extends JavaPlugin implements Listener {
             }
         };
         timeTask.runTaskTimer(this, 0L, 20L);
+
+        new org.bukkit.scheduler.BukkitRunnable() {
+            @Override
+            public void run() {
+                for (Player player : getServer().getOnlinePlayers()) {
+                    DataPlayer dp = uhcPlayers.get(player.getUniqueId());
+                    if (dp != null && dp.getRole() instanceof fr.flobanai.mguhc.roles.Poseidon) {
+                        dp.tickWaterTimer(player);
+                    }
+                }
+            }
+        }.runTaskTimer(this, 0L, 20L);
 
         new org.bukkit.scheduler.BukkitRunnable() {
             @Override
@@ -125,5 +138,67 @@ public class Main extends JavaPlugin implements Listener {
         if (uhcPlayer != null) {
             uhcPlayer.updateRealSpeed(player);
         }
+    }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        Player player = (Player) event.getEntity();
+        DataPlayer dataDeadPlayer = uhcPlayers.get(player.getUniqueId());
+        
+        if (dataDeadPlayer.getRole().getName() != null){
+            event.setDeathMessage(null);
+            String team = dataDeadPlayer.getRole().getTeam();
+            String color = "§f";
+
+            if (team.equalsIgnoreCase("Tartare")) {
+                color = "§c";
+            } else if (team.equalsIgnoreCase("Olympe")) {
+                color = "§e";
+            } else if (team.equalsIgnoreCase("Nyx")) {
+                color = "§5";
+            }
+
+            if (!dataDeadPlayer.getRole().getName().equalsIgnoreCase("Hadès")) {
+                String line1 =  "==================================================\n\n";
+                String line2 = player.getName() + " est mort, il était " + color + dataDeadPlayer.getRole().getName() + "\n";
+                String line3 =  "==================================================\n";
+
+
+                getServer().broadcastMessage(centerMessage(line1));
+                getServer().broadcastMessage(centerMessage(line2));
+                getServer().broadcastMessage(centerMessage(line3));
+
+            }
+        }
+    }
+    private String centerMessage(String message) {
+        int messagePxSize = 0;
+        boolean previousCode = false;
+        boolean isBold = false;
+
+        for (char c : message.toCharArray()) {
+            if (c == '§') {
+                previousCode = true;
+            } else if (previousCode) {
+                previousCode = false;
+                isBold = (c == 'l' || c == 'L');
+            } else {
+                DefaultFontInfo dFI = DefaultFontInfo.getDefaultFontInfo(c);
+                messagePxSize += isBold ? dFI.getBoldLength() : dFI.getLength();
+                messagePxSize++;
+            }
+        }
+
+        int halvedMessageSize = messagePxSize / 2;
+        int toCompensate = 154 - halvedMessageSize;
+        int spaceLength = DefaultFontInfo.SPACE.getLength() + 1;
+        int compensated = 0;
+
+        StringBuilder sb = new StringBuilder();
+        while (compensated < toCompensate) {
+            sb.append(" ");
+            compensated += spaceLength;
+        }
+        return sb.toString() + message;
     }
 }

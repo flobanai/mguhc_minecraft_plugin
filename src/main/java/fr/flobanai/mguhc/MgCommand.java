@@ -84,7 +84,7 @@ public class MgCommand implements TabExecutor {
         }
         
         else if (args.length == 3 && subCommand.equals("setrole")) {
-            List<String> roles = Arrays.asList("Zeus", "Ares", "Hades", "Hermes", "Artemis", "Thesee", "Poseidon", "Hera", "Apollon", "Aphrodite", "Hephaistos", "Cronos", "Minotaure", "DemonM", "DemonF");
+            List<String> roles = Arrays.asList("Zeus", "Ares", "Hades", "Hermes", "Artemis", "Thesee", "Poseidon", "Hera", "Apollon", "Aphrodite", "Hephaistos", "Cronos", "Minotaure", "DemonM", "DemonF", "Nyx");
             
             for (String role : roles) {
                 if (role.toLowerCase().startsWith(args[2].toLowerCase())) {
