@@ -36,10 +36,15 @@ public abstract class Role {
         }
     }
 
+
     public abstract void applyBaseStats(DataPlayer player);
     public void applyDayEffects(DataPlayer player) {}
     public void applyNightEffects(DataPlayer player) {}
     public double getSituationalResistance(Player player) {return 0.0;}
     public double getSituationalStrength(Player player) {return 0.0;}
     public double getSituationalSpeed(Player player) {return 0.0;}
+    public void usePower(Player player) {
+        player.sendMessage("§cCe rôle n'a pas de pouvoir actif.");
+    }
+    public void resetEpisodeUses() {}
 }

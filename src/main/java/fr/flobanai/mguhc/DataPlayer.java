@@ -136,6 +136,10 @@ public class DataPlayer {
         }
     }
 
+    public void deleteRole(){
+        this.setRole(null);
+    }
+
     public double getDamageModifier() { return damageModifier; }
     public double getResistanceModifier() { return resistanceModifier; }
     public float getSpeedModifier() { return speedModifier; }

@@ -6,149 +6,79 @@ import java.util.UUID;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class Main extends JavaPlugin implements Listener {
-    
+
+    private static Main instance;
     public static HashMap<UUID, DataPlayer> uhcPlayers = new HashMap<>();
-    public static boolean isDay; 
-    private org.bukkit.scheduler.BukkitRunnable timeTask;
+    
+    public static boolean isDay = true;
+    private int currentEpisode = 1;
 
     @Override
     public void onEnable() {
-        System.out.println("MG UHC Plugin Enabled");
+        instance = this;
         getServer().getPluginManager().registerEvents(this, this);
+    }
 
-        getCommand("mg").setExecutor(new MgCommand());
+    public static Main getInstance() {
+        return instance;
+    }
 
-        timeTask = new org.bukkit.scheduler.BukkitRunnable() {
-            boolean wasDay = true;
+    public void startGame() {
+        currentEpisode = 1;
+        isDay = true;
+        
+        getServer().getWorlds().get(0).setTime(0);
+        getServer().broadcastMessage("§8[§6MgUHC§8] §fDébut de l'épisode §e" + currentEpisode + " §f! §eLe soleil se lève.");
 
+        for (DataPlayer dp : uhcPlayers.values()) {
+            if (dp.getRole() != null) {
+                dp.getRole().resetEpisodeUses();
+                dp.getRole().applyDayEffects(dp);
+            }
+        }
+
+        new BukkitRunnable() {
             @Override
             public void run() {
-                org.bukkit.World world = getServer().getWorlds().get(0);
-                long time = world.getTime();
+                isDay = !isDay;
 
-                isDay = time < 12000 || time > 23000;
+                if (isDay) {
+                    currentEpisode++;
+                    getServer().getWorlds().get(0).setTime(0);
+                    getServer().broadcastMessage("§8[§6MgUHC§8] §fDébut de l'épisode §e" + currentEpisode + " §f! §eLe soleil se lève.");
+                } else {
+                    getServer().getWorlds().get(0).setTime(13000);
+                    getServer().broadcastMessage("§8[§6MgUHC§8] §9La nuit tombe.");
+                }
 
-                if (isDay && !wasDay) {
-                    wasDay = true;
-                    getServer().broadcastMessage("§eLe jour se lève...");
-                    
-                    for (DataPlayer uhcPlayer : uhcPlayers.values()) {
-                        if (uhcPlayer.getRole() != null) {
-                            uhcPlayer.getRole().applyDayEffects(uhcPlayer);
+                for (DataPlayer dp : uhcPlayers.values()) {
+                    if (dp.getRole() != null) {
+                        if (isDay) {
+                            dp.getRole().resetEpisodeUses();
+                            dp.getRole().applyDayEffects(dp);
+                        } else {
+                            dp.getRole().applyNightEffects(dp);
                         }
                     }
-                } else if (!isDay && wasDay) {
-                    wasDay = false;
-                    getServer().broadcastMessage("§8La nuit tombe...");
-                    
-                    for (DataPlayer uhcPlayer : uhcPlayers.values()) {
-                        if (uhcPlayer.getRole() != null) {
-                            uhcPlayer.getRole().applyNightEffects(uhcPlayer);
-                        }
-                    }
                 }
             }
-        };
-        timeTask.runTaskTimer(this, 0L, 20L);
-
-        new org.bukkit.scheduler.BukkitRunnable() {
-            @Override
-            public void run() {
-                for (Player player : getServer().getOnlinePlayers()) {
-                    DataPlayer dp = uhcPlayers.get(player.getUniqueId());
-                    if (dp != null && dp.getRole() instanceof fr.flobanai.mguhc.roles.Poseidon) {
-                        dp.tickWaterTimer(player);
-                    }
-                }
-            }
-        }.runTaskTimer(this, 0L, 20L);
-
-        new org.bukkit.scheduler.BukkitRunnable() {
-            @Override
-            public void run() {
-                for (Player player : getServer().getOnlinePlayers()) {
-                    DataPlayer dp = uhcPlayers.get(player.getUniqueId());
-                    if (dp != null) {
-                        dp.updateRealSpeed(player);
-                    }
-                }
-            }
-        }.runTaskTimer(this, 0L, 40L);
-    }
-
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        DataPlayer uhcPlayer = new DataPlayer(player.getUniqueId());
-        uhcPlayers.put(player.getUniqueId(), uhcPlayer);
-    }
-
-    @EventHandler
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player) {
-            Player attacker = (Player) event.getDamager();
-            DataPlayer uhcAttacker = uhcPlayers.get(attacker.getUniqueId());
-
-            if (uhcAttacker != null) {
-                double rawDamage = event.getDamage();
-                
-                if (uhcAttacker.getStrengthLevel() > 0) {
-                    rawDamage -= (3.0 * uhcAttacker.getStrengthLevel());
-                }
-                
-                if (rawDamage < 1.0) rawDamage = 1.0;
-
-                double finalStrength = uhcAttacker.getDamageModifier();
-                
-                event.setDamage(rawDamage * finalStrength);
-            }
-        }
-
-        if (event.getEntity() instanceof Player) {
-            Player victim = (Player) event.getEntity();
-            DataPlayer uhcVictim = uhcPlayers.get(victim.getUniqueId());
-
-            if (uhcVictim != null) {
-                double rawDamage = event.getDamage();
-
-                if (uhcVictim.getResistanceLevel() > 0) {
-                    double vanillaResistance = 1.0 - (0.2 * uhcVictim.getResistanceLevel());
-                    if (vanillaResistance <= 0) vanillaResistance = 0.01;
-                    rawDamage = rawDamage / vanillaResistance;
-                }
-
-                double finalResistance = uhcVictim.getResistanceModifier();
-
-                event.setDamage(rawDamage * finalResistance);
-            }
-        }
-    }
-
-    @EventHandler
-    public void onPlayerRespawn(PlayerRespawnEvent event) {
-        Player player = event.getPlayer();
-        DataPlayer uhcPlayer = uhcPlayers.get(player.getUniqueId());
-
-        if (uhcPlayer != null) {
-            uhcPlayer.updateRealSpeed(player);
-        }
+        }.runTaskTimer(this, 12000L, 12000L);
     }
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
-        Player player = (Player) event.getEntity();
-        DataPlayer dataDeadPlayer = uhcPlayers.get(player.getUniqueId());
-        
-        if (dataDeadPlayer.getRole().getName() != null){
+        Player victim = event.getEntity();
+        DataPlayer victimData = uhcPlayers.get(victim.getUniqueId());
+
+        if (victimData != null && victimData.getRole() != null) {
             event.setDeathMessage(null);
-            String team = dataDeadPlayer.getRole().getTeam();
+
+            String team = victimData.getRole().getTeam();
             String color = "§f";
 
             if (team.equalsIgnoreCase("Tartare")) {
@@ -159,19 +89,20 @@ public class Main extends JavaPlugin implements Listener {
                 color = "§5";
             }
 
-            if (!dataDeadPlayer.getRole().getName().equalsIgnoreCase("Hadès")) {
-                String line1 =  "==================================================\n\n";
-                String line2 = player.getName() + " est mort, il était " + color + dataDeadPlayer.getRole().getName() + "\n";
-                String line3 =  "==================================================\n";
-
-
-                getServer().broadcastMessage(centerMessage(line1));
-                getServer().broadcastMessage(centerMessage(line2));
-                getServer().broadcastMessage(centerMessage(line3));
-
-            }
+            String line1 = "--------------------------------------";
+            String line2 = victim.getName() + " est mort, il était " + color + victimData.getRole().getName();
+            
+            getServer().broadcastMessage(centerMessage(line1));
+            getServer().broadcastMessage(centerMessage(line2));
+            getServer().broadcastMessage(centerMessage(line1));
         }
+
+        if (victimData != null){
+            victimData.deleteRole();
+        }
+        
     }
+
     private String centerMessage(String message) {
         int messagePxSize = 0;
         boolean previousCode = false;

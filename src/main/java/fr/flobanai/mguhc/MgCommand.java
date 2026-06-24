@@ -15,12 +15,14 @@ public class MgCommand implements TabExecutor {
     private final SetroleCommand setroleCmd = new SetroleCommand();
     private final GetroleCommand getroleCmd = new GetroleCommand();
     private final HelpCmd helpCmd = new HelpCmd();
+    private final StartGameCmd startCmd = new StartGameCmd();
     
     private final Map<String, String> commandPermissions = new HashMap<>();
 
     public MgCommand() {
         commandPermissions.put("setrole", "mguhc.admin");
         commandPermissions.put("getrole", "mguhc.admin");
+        commandPermissions.put("start", "mguhc.admin");
         commandPermissions.put("help", "none");
     }
 
@@ -28,7 +30,7 @@ public class MgCommand implements TabExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         
         if (args.length == 0) {
-            sender.sendMessage("§cUtilisation: /mg <setrole|getrole> [paramètres]");
+            sender.sendMessage("§cUtilisation: /mg <commande> [paramètres]");
             return true;
         }
 
