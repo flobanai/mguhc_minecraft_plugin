@@ -94,6 +94,13 @@ public class Main extends JavaPlugin implements Listener {
         }
     }
 
+    public void forceDay() {
+        if (!isDay) {
+            advanceTime();
+            startGameLoop();
+        }
+    }
+
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player victim = event.getEntity();
