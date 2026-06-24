@@ -13,7 +13,8 @@ public class SetroleCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         
         if (!(sender instanceof Player)) {
-            return false;
+            sender.sendMessage("§cSeul un joueur peut utiliser cette commande !");
+            return true;
         }
 
         Player player = (Player) sender;
@@ -25,24 +26,27 @@ public class SetroleCommand implements CommandExecutor {
             if (targetPlayer != null) {
                 
                 DataPlayer dataPlayer = Main.uhcPlayers.get(targetPlayer.getUniqueId());
-                if (dataPlayer != null) {
-                    
-                    // On utilise la Factory pour créer le bon objet Rôle
-                    Role newRole = RoleFactory.getRoleFromString(roleName);
-                    
-                    if (newRole != null) {
-                        dataPlayer.setRole(newRole);
-                        dataPlayer.updateRealSpeed(targetPlayer);
-                        sender.sendMessage("Le rôle de " + targetPlayer.getName() + " a été changé en : " + newRole.getName());
-                    } else {
-                        player.sendMessage("Rôle introuvable dans le système. Avez-vous créé la classe ?");
-                    }
+                
+                if (dataPlayer == null) {
+                    dataPlayer = new DataPlayer(targetPlayer.getUniqueId());
+                    Main.uhcPlayers.put(targetPlayer.getUniqueId(), dataPlayer);
                 }
+                    
+                Role newRole = RoleFactory.getRoleFromString(roleName);
+                
+                if (newRole != null) {
+                    dataPlayer.setRole(newRole);
+                    dataPlayer.updateRealSpeed(targetPlayer);
+                    sender.sendMessage("§aLe rôle de " + targetPlayer.getName() + " a été changé en : " + newRole.getName());
+                } else {
+                    player.sendMessage("§cRôle introuvable ! As-tu ajouté " + roleName + " dans RoleFactory.java ?");
+                }
+                
             } else {
-                sender.sendMessage("Joueur introuvable.");
+                sender.sendMessage("§cJoueur introuvable.");
             }
         } else {
-            player.sendMessage("Veuillez spécifier un joueur et un rôle. (Ex: /mg_setrole Notch Zeus)");
+            player.sendMessage("§cVeuillez spécifier un joueur et un rôle. (Ex: /mg setrole Notch Zeus)");
         }
 
         return true;

@@ -104,36 +104,22 @@ public class Nyx extends Role implements Listener {
             }
         }
 
-        new BukkitRunnable() {
-            int ticksLapsed = 0;
-
-            @Override
-            public void run() {
-                if (ticksLapsed >= 400 || !player.isOnline()) {
-                    this.cancel();
-                    return;
-                }
-
-                Location center = player.getLocation().add(0, 1, 0);
-                
-                for (int i = 0; i < 75; i++) {
-                    double offsetX = (Math.random() - 0.5) * 15.0;
-                    double offsetY = (Math.random() - 0.5) * 5.0;
-                    double offsetZ = (Math.random() - 0.5) * 15.0;
-                    
-                    Location particleLoc = new Location(
-                        player.getWorld(), 
-                        center.getX() + offsetX, 
-                        center.getY() + offsetY, 
-                        center.getZ() + offsetZ
-                    );
-                    
-                    player.getWorld().playEffect(particleLoc, Effect.SMOKE, 4);
-                }
-
-                ticksLapsed += 10;
-            }
-        }.runTaskTimer(JavaPlugin.getPlugin(Main.class), 0L, 10L);
+        Location center = player.getLocation().add(0, 1, 0);
+        
+        for (int i = 0; i < 500; i++) {
+            double offsetX = (Math.random() - 0.5) * 15.0;
+            double offsetY = (Math.random() - 0.5) * 5.0;
+            double offsetZ = (Math.random() - 0.5) * 15.0;
+            
+            Location particleLoc = new Location(
+                player.getWorld(), 
+                center.getX() + offsetX, 
+                center.getY() + offsetY, 
+                center.getZ() + offsetZ
+            );
+            
+            player.getWorld().playEffect(particleLoc, Effect.SMOKE, 4);
+        }
     }
 
     @Override

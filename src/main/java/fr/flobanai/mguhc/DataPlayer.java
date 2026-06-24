@@ -11,7 +11,6 @@ import fr.flobanai.mguhc.roles.Role;
 public class DataPlayer {
     private final UUID uuid;
     private Role role;
-    private int waterTimer = 0;
     
     private double damageModifier = 1.0;
     private double resistanceModifier = 1.0;
@@ -24,6 +23,8 @@ public class DataPlayer {
     private int baseStrength = 0;
     private int baseResistance = 0;
     private int baseSpeed = 0;
+
+    private int waterTimer = 0;
 
     public DataPlayer(UUID uuid) {
         this.uuid = uuid;
@@ -43,6 +44,22 @@ public class DataPlayer {
     public void applySpeed(int level) {
         this.baseSpeed = level;
         forceUpdate(org.bukkit.Bukkit.getPlayer(this.uuid));
+    }
+
+    public void tickWaterTimer(Player player) {
+        if (player.getLocation().getBlock().isLiquid()) {
+            waterTimer++;
+            
+            if (waterTimer >= 30) {
+                double maxHealth = player.getMaxHealth();
+                if (player.getHealth() < maxHealth) {
+                    player.setHealth(Math.min(maxHealth, player.getHealth() + 2.0));
+                }
+                waterTimer = 0;
+            }
+        } else {
+            waterTimer = 0;
+        }
     }
 
     public void updateDynamicEffects(Player player) {
@@ -104,22 +121,6 @@ public class DataPlayer {
         }
     }
 
-    public void tickWaterTimer(Player player) {
-        if (player.getLocation().getBlock().isLiquid()) {
-            waterTimer++;
-            
-            if (waterTimer >= 30) {
-                double maxHealth = player.getMaxHealth();
-                if (player.getHealth() < maxHealth) {
-                    player.setHealth(Math.min(maxHealth, player.getHealth() + 2.0));
-                }
-                waterTimer = 0;
-            }
-        } else {
-            waterTimer = 0;
-        }
-    }
-
     public UUID getUuid() { return uuid; }
     
     public Role getRole() { return role; }
@@ -134,10 +135,6 @@ public class DataPlayer {
         if (this.role != null) {
             this.role.applyBaseStats(this);
         }
-    }
-
-    public void deleteRole(){
-        this.setRole(null);
     }
 
     public double getDamageModifier() { return damageModifier; }

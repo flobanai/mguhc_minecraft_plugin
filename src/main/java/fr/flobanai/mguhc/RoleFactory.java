@@ -18,49 +18,44 @@ import fr.flobanai.mguhc.roles.Role;
 import fr.flobanai.mguhc.roles.Thesee;
 import fr.flobanai.mguhc.roles.Zeus;
 
-/**
- * Cette classe remplace ton ancien Enum. 
- * Son seul but est de convertir le texte tapé dans la commande 
- * en un véritable Objet Rôle.
- */
 public class RoleFactory {
 
     public static Role getRoleFromString(String roleName) {
         switch (roleName.toUpperCase()) {
-            case "ZEUS":
-                return new Zeus();
-            case "POSEIDON":
-                return new Poseidon();
-            case "HADES":
-                return new Hades();
-            case "HERMES":
-                return new Hermes();
-            case "HERA":
-                return new Hera();
-            case "APOLLON":
-                return new Apollon();
-            case "ARTEMIS":
-                return new Artemis();
-            case "ARES":
-                return new Ares();
             case "APHRODITE":
                 return new Aphrodite();
-            case "THESEE":
-                return new Thesee();
-            case "HEPHAISTOS":
-                return new Hephaistos();
+            case "APOLLON":
+                return new Apollon();
+            case "ARES":
+                return new Ares();
+            case "ARTEMIS":
+                return new Artemis();
             case "CRONOS":
                 return new Cronos();
-            case "MINOTAURE":
-                return new Minotaure();
             case "DEMONF":
                 return new DemonF();
             case "DEMONM":
                 return new DemonM();
+            case "HADES":
+                return new Hades();
+            case "HEPHAISTOS":
+                return new Hephaistos();
+            case "HERA":
+                return new Hera();
+            case "HERMES":
+                return new Hermes();
+            case "MINOTAURE":
+                return new Minotaure();
             case "NYX":
                 return new Nyx();
+            case "POSEIDON":
+                return new Poseidon();
+            case "THESEE":
+                return new Thesee();
+            case "ZEUS":
+                return new Zeus();
             default:
-                return null; // Rôle introuvable
+                return null; 
         }
     }
 }

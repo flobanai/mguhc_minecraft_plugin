@@ -99,7 +99,7 @@ public class MgCommand implements TabExecutor {
             return completions;
         }
         
-        if (args.length == 2 && subCommand.equals("setrole")) {
+        if (args.length == 2 && (subCommand.equals("setrole") || subCommand.equals("getrole"))) {
             return null;
         }
         
