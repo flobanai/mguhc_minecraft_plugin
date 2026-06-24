@@ -3,46 +3,106 @@ package fr.flobanai.mguhc;
 import java.util.UUID;
 
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import fr.flobanai.mguhc.roles.Role;
 
 public class DataPlayer {
     private final UUID uuid;
-    private Role role; // On utilise maintenant l'Objet Role et non plus l'Enum
+    private Role role;
     
     private double damageModifier = 1.0;
     private double resistanceModifier = 1.0;
     private float speedModifier = 1.0f;
+
+    private int strengthLevel = 0;
+    private int resistanceLevel = 0;
+    private int speedLevel = 0;
+
+    private int baseStrength = 0;
+    private int baseResistance = 0;
+    private int baseSpeed = 0;
 
     public DataPlayer(UUID uuid) {
         this.uuid = uuid;
         this.role = null; 
     }
 
-    // --- METHODES D'APPLICATION DES STATS ---
-
     public void applyStrength(int level) {
-        this.damageModifier = 1.0 + (GameConstants.BASE_STRENGTH * level);
+        this.baseStrength = level;
+        forceUpdate(org.bukkit.Bukkit.getPlayer(this.uuid));
     }
 
     public void applyResistance(int level) {
-        this.resistanceModifier = 1.0 - (GameConstants.BASE_RESISTANCE * level);
-        if (this.resistanceModifier < 0.0) this.resistanceModifier = 0.0;
+        this.baseResistance = level;
+        forceUpdate(org.bukkit.Bukkit.getPlayer(this.uuid));
     }
 
     public void applySpeed(int level) {
-        this.speedModifier = 1.0f + (GameConstants.BASE_SPEED * level);
+        this.baseSpeed = level;
+        forceUpdate(org.bukkit.Bukkit.getPlayer(this.uuid));
     }
 
-    public void updateRealSpeed(Player player) {
-        float finalSpeed = 0.2f * this.speedModifier;
-        if (finalSpeed > 1.0f) finalSpeed = 1.0f;
-        if (finalSpeed < -1.0f) finalSpeed = -1.0f;
-        player.setWalkSpeed(finalSpeed);
+    public void updateDynamicEffects(Player player) {
+        if (player == null) return;
+
+        int totalStr = this.baseStrength;
+        int totalRes = this.baseResistance;
+        int totalSpd = this.baseSpeed;
+
+        if (this.role != null) {
+            totalStr += (int) Math.round(this.role.getSituationalStrength(player) / GameConstants.BASE_STRENGTH);
+            totalRes += (int) Math.round(this.role.getSituationalResistance(player) / GameConstants.BASE_RESISTANCE);
+            totalSpd += (int) Math.round(this.role.getSituationalSpeed(player) / GameConstants.BASE_SPEED);
+        }
+
+        if (totalStr != this.strengthLevel) {
+            this.strengthLevel = totalStr;
+            this.damageModifier = 1.0 + (GameConstants.BASE_STRENGTH * totalStr);
+            applyOrRemoveEffect(player, PotionEffectType.INCREASE_DAMAGE, totalStr);
+        }
+
+        if (totalRes != this.resistanceLevel) {
+            this.resistanceLevel = totalRes;
+            this.resistanceModifier = 1.0 - (GameConstants.BASE_RESISTANCE * totalRes);
+            if (this.resistanceModifier < 0.0) this.resistanceModifier = 0.0;
+            applyOrRemoveEffect(player, PotionEffectType.DAMAGE_RESISTANCE, totalRes);
+        }
+
+        if (totalSpd != this.speedLevel) {
+            this.speedLevel = totalSpd;
+            this.speedModifier = 1.0f + (GameConstants.BASE_SPEED * totalSpd);
+            applyOrRemoveEffect(player, PotionEffectType.SPEED, totalSpd);
+            
+            float vanillaMultiplier = 1.0f + (0.2f * totalSpd);
+            float targetSpeed = 0.2f * this.speedModifier;
+            float finalSpeed = targetSpeed / vanillaMultiplier;
+            
+            if (finalSpeed > 1.0f) finalSpeed = 1.0f;
+            if (finalSpeed < -1.0f) finalSpeed = -1.0f;
+            player.setWalkSpeed(finalSpeed);
+        }
     }
 
-    // --- GETTERS ET SETTERS ---
-    
+    private void forceUpdate(Player player) {
+        if (player != null) {
+            this.strengthLevel = -1; 
+            this.resistanceLevel = -1;
+            this.speedLevel = -1;
+            updateDynamicEffects(player);
+        }
+    }
+
+    private void applyOrRemoveEffect(Player p, PotionEffectType type, int level) {
+        if (level > 0) {
+            p.removePotionEffect(type);
+            p.addPotionEffect(new PotionEffect(type, Integer.MAX_VALUE, level - 1, false, false), true);
+        } else {
+            p.removePotionEffect(type);
+        }
+    }
+
     public UUID getUuid() { return uuid; }
     
     public Role getRole() { return role; }
@@ -50,24 +110,24 @@ public class DataPlayer {
     public void setRole(Role role) { 
         this.role = role; 
         
-        // On remet les stats à zéro (100%) avant d'appliquer les nouvelles
-        // pour éviter que les effets se cumulent si on change de rôle en cours de partie
-        this.damageModifier = 1.0;
-        this.resistanceModifier = 1.0;
-        this.speedModifier = 1.0f;
+        this.baseStrength = 0;
+        this.baseResistance = 0;
+        this.baseSpeed = 0;
         
-        // On délègue la tâche au fichier du rôle concerné !
         if (this.role != null) {
             this.role.applyBaseStats(this);
         }
     }
 
     public double getDamageModifier() { return damageModifier; }
-    public void setDamageModifier(double damageModifier) { this.damageModifier = damageModifier; }
-
     public double getResistanceModifier() { return resistanceModifier; }
-    public void setResistanceModifier(double resistanceModifier) { this.resistanceModifier = resistanceModifier; }
-
     public float getSpeedModifier() { return speedModifier; }
-    public void setSpeedModifier(float speedModifier) { this.speedModifier = speedModifier; }
+
+    public int getStrengthLevel() { return strengthLevel; }
+    public int getResistanceLevel() { return resistanceLevel; }
+    public int getSpeedLevel() { return speedLevel; }
+
+    public void updateRealSpeed(Player player) {
+        updateDynamicEffects(player);
+    }
 }

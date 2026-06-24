@@ -13,4 +13,14 @@ public class DemonM extends Role {
     public void applyBaseStats(DataPlayer player) {
         player.applySpeed(1);
     }
+
+    @Override
+    public void applyDayEffects(DataPlayer player) {
+        player.applyStrength(0);
+    }
+
+    @Override
+    public void applyNightEffects(DataPlayer player) {
+        player.applyStrength(1);
+    }
 }

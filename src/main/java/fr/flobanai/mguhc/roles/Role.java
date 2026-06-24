@@ -1,5 +1,7 @@
 package fr.flobanai.mguhc.roles;
 
+import org.bukkit.entity.Player;
+
 import fr.flobanai.mguhc.DataPlayer;
 
 /**
@@ -34,9 +36,10 @@ public abstract class Role {
         }
     }
 
-    /**
-     * Cette méthode sera personnalisée dans chaque fichier de rôle
-     * pour appliquer les pourcentages spécifiques à l'attribution.
-     */
     public abstract void applyBaseStats(DataPlayer player);
+    public void applyDayEffects(DataPlayer player) {}
+    public void applyNightEffects(DataPlayer player) {}
+    public double getSituationalResistance(Player player) {return 0.0;}
+    public double getSituationalStrength(Player player) {return 0.0;}
+    public double getSituationalSpeed(Player player) {return 0.0;}
 }
