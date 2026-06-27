@@ -27,6 +27,19 @@ public class Main extends JavaPlugin implements Listener {
         instance = this;
         getServer().getPluginManager().registerEvents(this, this);
         getCommand("mg").setExecutor(new MgCommand());
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (Player player : getServer().getOnlinePlayers()) {
+                    DataPlayer dp = uhcPlayers.get(player.getUniqueId());
+                    if (dp != null && dp.getRole() != null) {
+                        dp.updateDynamicEffects(player);
+                        dp.tickWaterTimer(player);
+                    }
+                }
+            }
+        }.runTaskTimer(this, 20L, 20L);
     }
 
     public static Main getInstance() {
