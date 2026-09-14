@@ -2,11 +2,11 @@ package fr.flobanai.mguhc.roles;
 
 import org.bukkit.entity.Player;
 
-import fr.flobanai.mguhc.DataPlayer;
+import fr.flobanai.mguhc.player.DataPlayer;
 
 public abstract class Role {
     private final String name;
-    private String team;
+    private Team team;
 
     public Role(String name) {
         this.name = name;
@@ -16,24 +16,16 @@ public abstract class Role {
         return name;
     }
 
-    public String getTeam() {
+    public Team getTeam() {
         return team;
     }
 
-    public void setTeam(String newTeam) {
-        if (newTeam.equalsIgnoreCase("Olympe") || 
-            newTeam.equalsIgnoreCase("Tartare") || 
-            newTeam.equalsIgnoreCase(this.name)) {
-            
-            this.team = newTeam;
-            
-        } else {
-            System.out.println("[Attention] Tentative d'assigner une équipe invalide (" + newTeam + ") au rôle " + this.name);
-        }
+    public void setTeam(Team newTeam) {
+        this.team = newTeam;
     }
 
     public void applyDayEffects(DataPlayer player) {}
-    
+
     public void applyNightEffects(DataPlayer player) {}
 
     public double getSituationalResistance(Player player) {
@@ -55,4 +47,25 @@ public abstract class Role {
     }
 
     public void resetEpisodeUses() {}
+
+    /**
+     * @return false si la mort de ce rôle ne doit jamais être annoncée (ex: Hadès).
+     */
+    public boolean isDeathAnnounced() {
+        return true;
+    }
+
+    /**
+     * Appelée sur le rôle du TUEUR lorsqu'une de ses victimes meurt, avant le broadcast normal.
+     *
+     * @return true si ce rôle a intercepté/masqué l'annonce (le broadcast normal est alors supprimé).
+     */
+    public boolean onKillerDeathBroadcast(DataPlayer killerData, String plainLine, String hiddenLine, boolean isNight) {
+        return false;
+    }
+
+    /**
+     * Appelée sur le rôle de la VICTIME juste après la mort, une fois le broadcast géré.
+     */
+    public void onOwnDeath() {}
 }

@@ -1,0 +1,18 @@
+package fr.flobanai.mguhc.roles.olympe;
+
+import fr.flobanai.mguhc.player.DataPlayer;
+import fr.flobanai.mguhc.roles.Role;
+import fr.flobanai.mguhc.roles.Team;
+
+public class Hermes extends Role {
+
+    public Hermes() {
+        super("Hermès");
+        this.setTeam(Team.OLYMPE);
+    }
+
+    @Override
+    public void applyBaseStats(DataPlayer player) {
+        player.applySpeed(1);
+    }
+}
