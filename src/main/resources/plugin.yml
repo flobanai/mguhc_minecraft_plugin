@@ -8,10 +8,15 @@ commands:
   mg:
     description: Englobe l'entiéreté des commandes du plugin
     usage: /mg <subcommand> [parameters]
-  
+
   #setrole:
     #description: Attribue un rôle à un joueur
     #usage: /mg setrole <joueur> <role>
   #getrole:
     #description: Affiche le rôle d'un joueur
     #usage: /mg getrole [joueur]
+
+permissions:
+  mguhc.admin:
+    description: Accès aux commandes d'administration de MgUHC (setrole, getrole, start, day, night)
+    default: op
